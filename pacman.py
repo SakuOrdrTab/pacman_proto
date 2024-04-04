@@ -68,7 +68,7 @@ class PacmanWindow(QWidget):
 
 
         self.movingAnimation = QPropertyAnimation(self.pacmanLabel, b"geometry")
-        self.movingAnimation.setDuration(self._minutes * 60 *1000) # Set pacman animation duration
+        self.movingAnimation.setDuration(self._animation_duration * 60 *1000) # Set pacman animation duration
         self.movingAnimation.setStartValue(startRect)
         self.movingAnimation.setEndValue(endRect)
         self.movingAnimation.setLoopCount(1)  # -1 for infinite loop
@@ -92,6 +92,15 @@ class PacmanWindow(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    pacman_window = PacmanWindow(counter_minutes=5)
+    if len(sys.argv) > 1:
+        try:
+            minutes_to_go = float(sys.argv[1])
+        except ValueError:
+            print("The argument must be a number")
+            sys.exit(1)
+    else:
+        minutes_to_go = 6
+    print("Counter measuring time in minutes: ", minutes_to_go)
+    pacman_window = PacmanWindow(counter_minutes=minutes_to_go)
     pacman_window.show()
     sys.exit(app.exec())
