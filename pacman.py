@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QApplication, QWidget, QLabel
 from PySide6.QtGui import QGuiApplication, QScreen, QPixmap
 from PySide6.QtCore import QPropertyAnimation, QTimer, QRect, Qt
 
-class AnimationDemo(QWidget):
+class PacmanWindow(QWidget):
     def __init__(self):
         super().__init__()
         # Set the window to be always on top
@@ -13,20 +13,21 @@ class AnimationDemo(QWidget):
         # Set the window size to the screen size
         display_dimensions = QScreen.availableGeometry(QGuiApplication.primaryScreen())
         print(display_dimensions)
-        # Set the height of the window to 1/20 of the screen height
-        # display_dimensions.setHeight(display_dimensions.height() // 10)
-        # Set display height to pacman picture, 200 pixels
-        display_dimensions.setHeight(200)
+        # Set the height of the window to 1/16 of the screen height
+        display_dimensions.setHeight(display_dimensions.height() // 16)
         self.setGeometry(display_dimensions)
         # Make the window transparent
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.initUI()
+        # Save also the pacman size for more readable code
+        self._pacman_size = self.pacmanOpen.height()
 
     def initUI(self):
         self.setWindowTitle('Pacman representation time guardian')
 
-        self.pacmanOpen = QPixmap('pacman_mouth_open.png')  # Pac-Man with mouth open
-        self.pacmanClosed = QPixmap('pacman_mouth_close.png')  # Pac-Man with mouth closed
+        # Load pacman pictures
+        self.pacmanOpen = QPixmap('pacman_mouth_open.png').scaled(self.height(), self.height())  # Pac-Man with mouth open
+        self.pacmanClosed = QPixmap('pacman_mouth_close.png').scaled(self.height(), self.height()) # Pac-Man with mouth closed
 
         # Create a QLabel widget for Pac-Man
         self.pacmanLabel = QLabel(self)
@@ -36,17 +37,17 @@ class AnimationDemo(QWidget):
         # Start the animation
         QTimer.singleShot(100, self.startMovingAnimation)
         self.startMouthAnimation()
+        # Save the window size as variables
+        self._screen_width = self.width()  # Get the current width of the window
+        print(self._screen_width)
+        self._screen_height = self.height()  # Get the current height of the window
+        print(self._screen_height)
 
 
     def startMovingAnimation(self):
-        screenWidth = self.width()  # Get the current width of the window
-        print(screenWidth)
-        screenHeight = self.height()  # Get the current height of the window
-        print(screenHeight)
-
         #  Ensure the entire 200x200 size of the Pac-Man image is accommodated
-        startRect = QRect(0, screenHeight // 2 - 100, 200, 200)  # Start at the left, centered vertically
-        endRect = QRect(screenWidth - 200, screenHeight // 2 - 100, 200, 200)  # End at the right, centered vertically
+        startRect = QRect(0, self._screen_height // 2 - 100, 200, 200)  # Start at the left, centered vertically
+        endRect = QRect(self._screen_width - 200, self._screen_height // 2 - 100, 200, 200)  # End at the right, centered vertically
 
 
         self.movingAnimation = QPropertyAnimation(self.pacmanLabel, b"geometry")
@@ -69,6 +70,6 @@ class AnimationDemo(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    demo = AnimationDemo()
-    demo.show()
+    pacman_window = PacmanWindow()
+    pacman_window.show()
     sys.exit(app.exec())
