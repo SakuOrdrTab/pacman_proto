@@ -90,6 +90,11 @@ class PacmanWindow(QWidget):
             self.pacmanLabel.setPixmap(self.pacmanOpen)
         self._mouth_open = not self._mouth_open 
 
+    def end_of_time(self):
+        """Pacman engulfs the screen.
+        """        
+        pass
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     if len(sys.argv) > 1:
