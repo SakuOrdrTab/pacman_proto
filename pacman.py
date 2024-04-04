@@ -45,9 +45,9 @@ class PacmanWindow(QWidget):
 
 
     def startMovingAnimation(self):
-        #  Ensure the entire 200x200 size of the Pac-Man image is accommodated
-        startRect = QRect(0, self._screen_height // 2 - 100, 200, 200)  # Start at the left, centered vertically
-        endRect = QRect(self._screen_width - 200, self._screen_height // 2 - 100, 200, 200)  # End at the right, centered vertically
+        #  Ensure the entire size of the Pac-Man image is accommodated
+        startRect = QRect(0, self._screen_height // 2 - self._pacman_size // 2, self._pacman_size, self._pacman_size)  # Start at the left, centered vertically
+        endRect = QRect(self._screen_width, self._screen_height // 2 - self._pacman_size // 2, self._pacman_size, self._pacman_size)  # End at the right, centered vertically
 
 
         self.movingAnimation = QPropertyAnimation(self.pacmanLabel, b"geometry")
