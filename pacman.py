@@ -1,6 +1,6 @@
 # Pac-man representation time counter
 import sys
-import time
+
 from PySide6.QtWidgets import QApplication, QWidget, QLabel
 from PySide6.QtGui import QGuiApplication, QScreen, QPixmap
 from PySide6.QtCore import QPropertyAnimation, QTimer, QRect, Qt
@@ -90,6 +90,9 @@ class PacmanWindow(QWidget):
         self.movingAnimation.setStartValue(startRect)
         self.movingAnimation.setEndValue(endRect)
         self.movingAnimation.setLoopCount(1)  # -1 for infinite loop
+        # Connect the finished signal to the end_of_time method
+        self.movingAnimation.finished.connect(self.end_of_time)
+
         self.movingAnimation.start()
 
     def startMouthAnimation(self):
