@@ -9,14 +9,26 @@ class PacmanWindow(QWidget):
     def __init__(self, counter_minutes : float = 5):
         super().__init__()
         self._minutes = counter_minutes
+        print("Counter measuring time in minutes: ", self._minutes)
         # Set pacman to show up in the end of the time
         if self._minutes > 15:
             self._animation_duration = 10
         elif self._minutes > 5:
             self._animation_duration = 5
         else:
-            self._animation_duration = self._minutes
-        time.sleep((self._minutes-self._animation_duration) * 60)
+            self._animation_duration = self._minutes if self._minutes > 0 else 0.01 # ensure non negative time
+
+        animation_start_delay_ms = (self._minutes - self._animation_duration) * 60 * 1000
+        print(f"Animation start delay: {animation_start_delay_ms} ms")
+        
+        # Window setup...
+        self.setupWindow()
+
+        # Delay starting the animations
+        QTimer.singleShot(animation_start_delay_ms, self.startAnimations)
+
+    def setupWindow(self):
+        """Set up the window and load UI components immediately."""
         # Set the window to be always on top
         self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
         self.setWindowFlag(Qt.FramelessWindowHint, True)
@@ -28,36 +40,42 @@ class PacmanWindow(QWidget):
         self.setGeometry(display_dimensions)
         # Make the window transparent
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.initUI()
-        # Save also the pacman size for more readable code
-        self._pacman_size = self.pacmanOpen.height()
-
-    def initUI(self):
-        """Loads the pacman pictures, creates a QLabel to show the pacman. The animation is started and some internal states are saved.
-        """        
+        # Set window flags and geometry...
         self.setWindowTitle('Pacman representation time guardian')
 
-        # Load pacman pictures
-        self.pacmanOpen = QPixmap('pacman_mouth_open.png').scaled(self.height(), self.height())  # Pac-Man with mouth open
-        self.pacmanClosed = QPixmap('pacman_mouth_close.png').scaled(self.height(), self.height()) # Pac-Man with mouth closed
+        # Load pacman pictures and set up QLabel for Pac-Man...
+        self.loadPacmanPictures()
 
-        # Save the state of the pacman's mouth
-        self._mouth_open = True
-
-        # Create a QLabel widget for Pac-Man
-        self.pacmanLabel = QLabel(self)
-        self.pacmanLabel.setPixmap(self.pacmanOpen)
-        self.pacmanLabel.resize(self.pacmanOpen.size())
-
-        # Start the animation
-        QTimer.singleShot(100, self.startMovingAnimation)
-        self.startMouthAnimation()
         # Save the window size as variables
         self._screen_width = self.width()  # Get the current width of the window
         print(self._screen_width)
         self._screen_height = self.height()  # Get the current height of the window
         print(self._screen_height)
 
+    def loadPacmanPictures(self):
+        """Loads the pacman pictures and prepares the QLabel."""
+        # Load pacman pictures...
+        self.pacmanOpen = QPixmap('pacman_mouth_open.png').scaled(self.height(), self.height())
+        self.pacmanClosed = QPixmap('pacman_mouth_close.png').scaled(self.height(), self.height())
+
+        # Save also the pacman size for more readable code...
+        self._pacman_size = self.pacmanOpen.height()
+        # Save the state of the pacman's mouth
+        self._mouth_open = True
+
+        # Create a QLabel widget for Pac-Man...
+        self.pacmanLabel = QLabel(self)
+        self.pacmanLabel.setPixmap(self.pacmanOpen)
+        self.pacmanLabel.resize(self.pacmanOpen.size())
+
+        # Initially hide the Pac-Man QLabel
+        self.pacmanLabel.hide()
+    
+    def startAnimations(self):
+        """Starts the moving and mouth animations for Pac-Man."""
+        self.pacmanLabel.show()
+        self.startMovingAnimation()
+        self.startMouthAnimation()
 
     def startMovingAnimation(self):
         """Starts the pacman's moving animation. The pacman will move from the left to the right of the screen.
@@ -93,7 +111,8 @@ class PacmanWindow(QWidget):
     def end_of_time(self):
         """Pacman engulfs the screen.
         """        
-        pass
+        self.pacmanLabel.hide() # Hide the pacman
+        print("Time is up!")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -105,7 +124,6 @@ if __name__ == '__main__':
             sys.exit(1)
     else:
         minutes_to_go = 6
-    print("Counter measuring time in minutes: ", minutes_to_go)
     pacman_window = PacmanWindow(counter_minutes=minutes_to_go)
     pacman_window.show()
     sys.exit(app.exec())
