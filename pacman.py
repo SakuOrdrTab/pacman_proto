@@ -29,6 +29,9 @@ class PacmanWindow(QWidget):
         self.pacmanOpen = QPixmap('pacman_mouth_open.png').scaled(self.height(), self.height())  # Pac-Man with mouth open
         self.pacmanClosed = QPixmap('pacman_mouth_close.png').scaled(self.height(), self.height()) # Pac-Man with mouth closed
 
+        # Save the state of the pacman's mouth
+        self._mouth_open = True
+
         # Create a QLabel widget for Pac-Man
         self.pacmanLabel = QLabel(self)
         self.pacmanLabel.setPixmap(self.pacmanOpen)
@@ -63,10 +66,12 @@ class PacmanWindow(QWidget):
         self.mouthTimer.start(500)  # Adjust the interval for faster/slower mouth animation
 
     def toggleMouth(self):
-        if self.pacmanLabel.pixmap() == self.pacmanOpen:
+        # Use the attribute to check the mouth state
+        if self._mouth_open:
             self.pacmanLabel.setPixmap(self.pacmanClosed)
         else:
             self.pacmanLabel.setPixmap(self.pacmanOpen)
+        self._mouth_open = not self._mouth_open  # Toggle the state
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
