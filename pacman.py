@@ -1,7 +1,7 @@
 # Pac-man representation time counter
 import sys
 
-from PySide6.QtWidgets import QApplication, QWidget, QLabel
+from PySide6.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QLineEdit, QPushButton, QDialog, QDialogButtonBox
 from PySide6.QtGui import QGuiApplication, QScreen, QPixmap
 from PySide6.QtCore import QPropertyAnimation, QTimer, QRect, Qt
 
@@ -147,8 +147,32 @@ class PacmanWindow(QWidget):
 
         print("Time is up!")
 
+class TimeWindow(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Input Time")
+        self.layout = QVBoxLayout()
+        
+        self.info_label = QLabel("No counter time was provided in command line arguments.\nPlease provide a time in minutes:")
+        self.layout.addWidget(self.info_label)
+        
+        self.time_input = QLineEdit()
+        self.layout.addWidget(self.time_input)
+        
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        self.layout.addWidget(self.button_box)
+        
+        self.setLayout(self.layout)
+
+    def get_time(self):
+        return self.time_input.text()
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    
     if len(sys.argv) > 1:
         try:
             minutes_to_go = float(sys.argv[1])
@@ -156,7 +180,16 @@ if __name__ == '__main__':
             print("The argument must be a number")
             sys.exit(1)
     else:
-        minutes_to_go = 6
-    pacman_window = PacmanWindow(counter_minutes=0.1)
+        timeWindow = TimeWindow()
+        if timeWindow.exec() == QDialog.Accepted:
+            try:
+                minutes_to_go = float(timeWindow.get_time())
+            except ValueError:
+                print("The argument must be a number")
+                sys.exit(1)
+        else:
+            sys.exit(0)  # Exit if user cancels
+    
+    pacman_window = PacmanWindow(counter_minutes=minutes_to_go)
     pacman_window.show()
     sys.exit(app.exec())
