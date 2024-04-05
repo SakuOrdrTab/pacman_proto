@@ -117,16 +117,20 @@ class PacmanWindow(QWidget):
         """Pacman engulfs the screen."""
         self.pacmanLabel.hide()  # Hide the old pacman widget
         
-        # Optionally maximize the window to ensure it covers the full screen
+        # Maximize the window to ensure it covers the full screen
         self.showMaximized()
 
-        # Create a widget for end animation
+        # Create widget for end animation
         self.end_label = QLabel(self)
-        self.end_label.setPixmap(self.pacman_face.scaled(self.width(), self.height(), Qt.KeepAspectRatioByExpanding))
+        self.end_label.setAlignment(Qt.AlignCenter)  # Ensure the pixmap stays centered
+        self.end_label.setScaledContents(True)  # Enable scaling of the pixmap with the label
+        
+        # Set the pixmap without scaling it here; let the label handle scaling
+        self.end_label.setPixmap(self.pacman_face)
         self.end_label.resize(self._pacman_size, self._pacman_size)
         self.end_label.show()
 
-        # Adjusted start position to be within visible bounds, e.g., center
+        # Start position centered within the visible window
         centerX = self.width() / 2 - self._pacman_size / 2
         centerY = self.height() / 2 - self._pacman_size / 2
         startRect = QRect(centerX, centerY, self._pacman_size, self._pacman_size)
@@ -135,12 +139,11 @@ class PacmanWindow(QWidget):
         endRect = QRect(0, 0, self.width(), self.height())
 
         self.endAnimation = QPropertyAnimation(self.end_label, b"geometry")
-        self.endAnimation.setDuration(10000)  # Duration 10 seconds
+        self.endAnimation.setDuration(1000)  # Duration 1 seconds
         self.endAnimation.setStartValue(startRect)
         self.endAnimation.setEndValue(endRect)
         self.endAnimation.setLoopCount(1)
         self.endAnimation.start()
-
 
         print("Time is up!")
 
@@ -154,6 +157,6 @@ if __name__ == '__main__':
             sys.exit(1)
     else:
         minutes_to_go = 6
-    pacman_window = PacmanWindow(counter_minutes=0.5)
+    pacman_window = PacmanWindow(counter_minutes=0.1)
     pacman_window.show()
     sys.exit(app.exec())
