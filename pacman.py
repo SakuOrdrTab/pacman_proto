@@ -50,6 +50,9 @@ class PacmanWindow(QWidget):
         self._screen_height = self.height()  # Get the current height of the window
         print(self._screen_height)
 
+        self.init_pills(self._animation_duration)
+        print(f"Animation duration: {self._animation_duration}")
+
     def load_pacman_pictures(self):
         """Loads the pacman pictures and prepares the QLabel."""
         # Load pacman pictures...
@@ -70,12 +73,48 @@ class PacmanWindow(QWidget):
 
         # Initially hide the Pac-Man QLabel
         self.pacmanLabel.hide()
+
+    def init_pills(self, pill_count):
+        """Initializes the pills to be eaten by pacman in QLabels in correct spots in the screen.
+
+        Args:
+            pill_count (float): initially from self._animation_duration (float) converted to int
+        """        
+        self.pill_labels = []
+        pill_spacing = self._screen_width / pill_count
+        for i in range(int(pill_count)):
+            pill_label = QLabel(self)
+            pill_label.setPixmap(QPixmap('pill.png').scaledToWidth(self.height()))  # Pill's height is the same as the window's height
+            x_position = i * pill_spacing
+            pill_label.move(x_position, 0)  
+            pill_label.hide()  # Initially hide the pills until the animation starts
+            self.pill_labels.append((pill_label, x_position))
+
     
     def start_animations(self):
         """Starts the moving and mouth animations for Pac-Man."""
+        # Show the pills at the start of the animation
+        for pill_label, _ in self.pill_labels:
+            pill_label.show()
+        
         self.pacmanLabel.show()
         self.start_moving_animation()
         self.start_mouth_animation()
+
+        # Start a timer to check for pill consumption
+        self.check_pill_timer = QTimer(self)
+        self.check_pill_timer.timeout.connect(self.check_pill_consumption)
+        self.check_pill_timer.start(100)  # Check every 100 milliseconds
+
+    def check_pill_consumption(self):
+        """Checks the position of pacman and hides the pill QLabel if it has been "eaten"
+        """        
+        pacman_right_edge = self.pacmanLabel.x() + self.pacmanLabel.width()
+        # Iterate through pills to see if Pac-Man has "eaten" them
+        for pill_label, x_position in self.pill_labels[:]:  # Copy the list to avoid modification issues
+            if pacman_right_edge >= x_position:
+                pill_label.hide()  # Hide the pill
+                self.pill_labels.remove((pill_label, x_position))  # Remove the pill from tracking list
 
     def start_moving_animation(self):
         """Starts the pacman's moving animation. The pacman will move from the left to the right of the screen.
@@ -113,6 +152,8 @@ class PacmanWindow(QWidget):
 
     def end_of_time(self):
         """Pacman engulfs the screen."""
+        self.check_pill_timer.stop()  # Stop checking for pill consumption
+
         self.pacmanLabel.hide()  # Hide the old pacman widget
         
         # Maximize the window to ensure it covers the full screen
