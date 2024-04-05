@@ -57,6 +57,8 @@ class PacmanWindow(QWidget):
         # Load pacman pictures...
         self.pacmanOpen = QPixmap('pacman_mouth_open.png').scaled(self.height(), self.height())
         self.pacmanClosed = QPixmap('pacman_mouth_close.png').scaled(self.height(), self.height())
+        # Load end animation image, don't resize yet
+        self.pacman_face = QPixmap('pacman_face.png')
 
         # Save also the pacman size for more readable code...
         self._pacman_size = self.pacmanOpen.height()
@@ -112,9 +114,34 @@ class PacmanWindow(QWidget):
         self._mouth_open = not self._mouth_open 
 
     def end_of_time(self):
-        """Pacman engulfs the screen.
-        """        
-        self.pacmanLabel.hide() # Hide the pacman
+        """Pacman engulfs the screen."""
+        self.pacmanLabel.hide()  # Hide the old pacman widget
+        
+        # Optionally maximize the window to ensure it covers the full screen
+        self.showMaximized()
+
+        # Create a widget for end animation
+        self.end_label = QLabel(self)
+        self.end_label.setPixmap(self.pacman_face.scaled(self.width(), self.height(), Qt.KeepAspectRatioByExpanding))
+        self.end_label.resize(self._pacman_size, self._pacman_size)
+        self.end_label.show()
+
+        # Adjusted start position to be within visible bounds, e.g., center
+        centerX = self.width() / 2 - self._pacman_size / 2
+        centerY = self.height() / 2 - self._pacman_size / 2
+        startRect = QRect(centerX, centerY, self._pacman_size, self._pacman_size)
+
+        # End at full window size
+        endRect = QRect(0, 0, self.width(), self.height())
+
+        self.endAnimation = QPropertyAnimation(self.end_label, b"geometry")
+        self.endAnimation.setDuration(10000)  # Duration 10 seconds
+        self.endAnimation.setStartValue(startRect)
+        self.endAnimation.setEndValue(endRect)
+        self.endAnimation.setLoopCount(1)
+        self.endAnimation.start()
+
+
         print("Time is up!")
 
 if __name__ == '__main__':
@@ -127,6 +154,6 @@ if __name__ == '__main__':
             sys.exit(1)
     else:
         minutes_to_go = 6
-    pacman_window = PacmanWindow(counter_minutes=minutes_to_go)
+    pacman_window = PacmanWindow(counter_minutes=0.5)
     pacman_window.show()
     sys.exit(app.exec())
