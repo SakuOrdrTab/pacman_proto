@@ -1,7 +1,14 @@
 ''' Pac-man representation time counter '''
+
+# Version: 1.0
+# Todo:
+# - replace sys.argv with argparse, add --brutal, --duration, --help
+# - add pacman pics smoothen animation
+# - Set aspect ratio for pacman face
+
 import sys
 
-from PySide6.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QLineEdit, QPushButton, QDialog, QDialogButtonBox
+from PySide6.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QLineEdit, QDialog, QDialogButtonBox, QMessageBox
 from PySide6.QtGui import QGuiApplication, QScreen, QPixmap
 from PySide6.QtCore import QPropertyAnimation, QTimer, QRect, Qt
 
@@ -152,6 +159,15 @@ class PacmanWindow(QWidget):
 
     def end_of_time(self):
         """Pacman engulfs the screen."""
+        def end_alert():
+            # Helper function to show the final alert message
+            end_widget = QMessageBox(self)
+            end_widget.setWindowTitle("!")
+            end_widget.setIcon(QMessageBox.Critical)
+            end_widget.setText("Time is up!")
+            end_widget.addButton(QMessageBox.Ok)
+            end_widget.exec()
+            sys.exit(0)
         self.check_pill_timer.stop()  # Stop checking for pill consumption
 
         self.pacmanLabel.hide()  # Hide the old pacman widget
@@ -185,6 +201,9 @@ class PacmanWindow(QWidget):
         self.endAnimation.start()
 
         print("Time is up!")
+
+        # Show the alert 0.5 seconds after the animation ends
+        QTimer.singleShot(1500, end_alert)  
 
 class TimeWindow(QDialog):
     def __init__(self):
