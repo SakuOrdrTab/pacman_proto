@@ -16,7 +16,7 @@ Helps keep track of time in coding, too ;)
 
 ## Installing
 
-For those users, that are more familiar with lecturer's overusing their time, I have included a Windows executable:
+For those users, that are more familiar with lecturer's overusing their time, I have included a Windows executable, to be found in the dist folder:
 
 https://github.com/SakuOrdrTab/pacman_proto/blob/main/dist/pacman.exe
 
