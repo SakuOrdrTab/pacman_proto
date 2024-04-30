@@ -6,4 +6,6 @@ It is essenstially an alarm clock, that takes the time duration as an input. Clo
 
 The app was designed to prevent representations to use more time than allowed and was inspired by Spine Congresses: If representer has been allowed 10 minutes and he intends on speaking for 15 minutes this will not happen; put the pacman running for 11 minutes, and his/hers show will be over then!
 
-The GUI is done with PySide6.
+The GUI is done with PySide6. The app window should remain on top of all applications, otherwise this would not be much of use, wouldn't it?
+
+Helps keep track of time in coding, too ;)
