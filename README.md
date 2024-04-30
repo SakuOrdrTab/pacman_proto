@@ -1,4 +1,4 @@
-## Pacman time counter
+# Pacman time counter
 
 Pacman time counter is an application designed for windows to help keep track of time.
 
