@@ -25,13 +25,13 @@ It was built using Windows 11 and a normal dekstop computer.
 
 More robust way is of course is to run it as a python script:
 
-After cloning, create a venv:
+After cloning, create a venv:<br>
 ```python -m venv .venv```
 
-Activate venv:
+Activate venv:<br>
 ```.venv/Scripts/activate```
 
-run the script:
+run the script:<br>
 ```python pacman.py <optional argument: minutes to go>```
 
 
