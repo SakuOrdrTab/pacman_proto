@@ -14,3 +14,24 @@ The GUI is done with PySide6. The app window should remain on top of all applica
 
 Helps keep track of time in coding, too ;)
 
+## Installing
+
+For those users, that are more familiar with lecturer's overusing their time, I have included a Windows executable:
+
+https://github.com/SakuOrdrTab/pacman_proto/blob/main/dist/pacman.exe
+
+Of course, executables are very system-dependant, and I have no idea, how well this adapts to other windows configurations than mine..
+It was built using Windows 11 and a normal dekstop computer.
+
+More robust way is of course is to run it as a python script:
+
+After cloning, create a venv:
+´´´python -m venv .venv´´´
+
+Activate venv:
+´´´.venv/Scripts/activate´´´
+
+run the script:
+´´´python pacman.py <optional argument: minutes to go>´´´
+
+
